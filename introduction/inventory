@@ -1,0 +1,7 @@
+[django-db]
+173.230.147.165
+
+[all:vars]
+ansible_connection=ssh
+ansible_user=root
+ansible_pass=
