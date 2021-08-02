@@ -1,5 +1,5 @@
-[django-db]
-173.230.147.165
+[django-project]
+69.164.215.174
 
 [all:vars]
 ansible_connection=ssh

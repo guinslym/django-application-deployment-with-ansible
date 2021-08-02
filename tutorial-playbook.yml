@@ -1,0 +1,26 @@
+---
+- hosts: django-project
+  vars:
+    mysql_root_password: "Password1"
+
+  remote_user: root
+  roles:
+    - ubuntu-common
+    #- flask-webapp
+    #- mariadb
+    #- { role: geerlingguy.phpmyadmin }
+  tasks:
+    - name: Test Connection
+      ping:
+    - name: Get hostname for testing purpose
+      command: lsb_release -a
+      changed_when: False
+      register: hostname
+    - debug: var={{ item }}
+      with_items:
+        - hostname.stdout
+
+    - name: Set environment variables on remote host
+      shell: "echo $MY_ENV_VARIABLE"
+      environment: 
+        MY_ENV_VARIABLE: "Guinsly M"
