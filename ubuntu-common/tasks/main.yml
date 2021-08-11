@@ -36,5 +36,97 @@
     - build-essential 
     - libssl-dev 
     - libffi-dev 
+    - libpq-dev
     - python3-setuptools
     - python3-venv
+
+- name: Install PostgreSQL
+  apt:
+    pkg:
+    - postgresql
+    - postgresql-contrib
+    - libpq-dev
+
+- name: Ensure the PostgreSQL service is running
+  service: name=postgresql state=started enabled=yes
+
+- meta: flush_handlers
+
+- name: Update and upgrade apt packages (C-1/10)
+  become: true
+  apt:
+    update_cache: yes
+
+- name: Install python3-pip (C-2/10)
+  become: true
+  apt:
+    name: python3-pip
+    state: latest
+    update_cache: yes
+
+- name: Install python3-dev (C-3/10)
+  become: true
+  apt:
+    name: python3-dev
+    state: latest
+    update_cache: yes
+
+- name: Install libpq-dev (C-4/10)
+  become: true
+  apt:
+    name: libpq-dev
+    state: latest
+    update_cache: yes
+
+- name: Install postgresql (C-5/10)
+  become: true
+  apt:
+    name: postgresql
+    state: latest
+    update_cache: yes
+
+- name: Install postgresql-contrib (C-6/10)
+  become: true
+  apt:
+    name: postgresql-contrib
+    state: latest
+    update_cache: yes
+
+- name: Install curl (C-7/10)
+  become: true
+  apt:
+    name: curl
+    state: latest
+    update_cache: yes
+
+- name: Install nginx (C-8/10)
+  become: true
+  apt:
+    name: nginx
+    state: latest
+    update_cache: yes
+
+- name: Install python3-psycopg2 (C-9/10)
+  become: true
+  apt:
+    name: python3-psycopg2
+    state: latest
+    update_cache: yes
+
+- name: Install python3-venv (C-10/10)
+  become: true
+  apt:
+    name: python3-venv
+    state: latest
+    update_cache: yes
+
+- name: Remove unused packages
+  apt:
+    autoremove: true
+  become: true
+
+- name: Clean apt cache
+  apt:
+    autoclean: true
+  become: true
+  tags: update-system

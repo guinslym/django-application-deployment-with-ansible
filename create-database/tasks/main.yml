@@ -1,0 +1,62 @@
+- name: create database (D-1/3)
+  become: true
+  become_user: postgres
+  postgresql_db:
+        name: '{{ db_database }}'
+        encoding: UTF-8
+        state: present
+
+- name: create user (D-2/3)
+  postgresql_user: name={{ db_user }} password={{ db_password }}
+  become: true
+  become_user: postgres
+
+- name: grant all priviledges on database to user (D-3/3)
+  become: true
+  become_user: postgres
+  postgresql_privs:
+    db: '{{ db_database }}'
+    privs: ALL
+    type: database
+    objs: '{{ db_database }}'
+    role: '{{ db_user }}'
+
+- name: Set default encoding for db user
+  become: true
+  become_user: postgres
+  command: psql -U postgres -c "ALTER ROLE {{ db_user }} SET client_encoding TO 'utf8'"
+
+- name: Set default transaction isolation for db user
+  become: true
+  become_user: postgres
+  command: psql -U postgres -c "ALTER ROLE {{ db_user }} SET default_transaction_isolation TO 'read committed'"
+
+- name: Set default timezone for db user
+  become: true
+  become_user: postgres
+  command: psql -U postgres -c "ALTER ROLE {{ db_user }} SET timezone TO 'UTC'"
+
+
+- name: copying file with playbook
+  become: true 
+  copy:
+    src: ./dump.sql
+    dest: /tmp/
+    owner: postgres
+    group: postgres 
+
+- name: Add some dummy data to our database
+  become: true
+  become_user: postgres
+  shell: psql {{ db_database }} < /tmp/dump.sql
+
+- name: Get specific tables
+  postgresql_query:
+    db: "{{ db_database }}"
+    login_user: "{{ db_user }}"
+    login_password: "{{ db_password }}"
+    query: SELECT * FROM test 
+  register: result
+
+- debug:
+    var: result

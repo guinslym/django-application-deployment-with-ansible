@@ -1,13 +1,11 @@
 ---
 - hosts: all
   tasks:
-    - name: Get hostname for testing purpose
-      command: lsb_release -a
-      changed_when: False
-      register: hostname
-    - debug: var={{ item }}
-      with_items:
-        - hostname.stdout
+    - name: Test connectivity to target server
+      hosts: web_server1
+      tasks:
+        - name: Ping test
+          ping:
 
     - name: System details
       debug: msg="{{ item }}"
